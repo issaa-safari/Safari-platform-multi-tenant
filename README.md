@@ -28,6 +28,14 @@ npm run dev
 
 Apply the tracked foundation migration to an empty Supabase database. The SQL test under `supabase/tests/` uses a transaction and rolls back its synthetic fixtures. It must run against a disposable development database as an administrative test runner, not from browser code.
 
+Install a supported Supabase CLI separately; migration files were created with CLI 2.81.3. The CLI is not an application dependency. Apply all tracked migrations in order.
+
+Browser tests use `npm run test:browser`. A running, configured development server is required. The authenticated scenario needs `FOUNDATION_TEST_EMAIL`, `FOUNDATION_TEST_PASSWORD` and a unique `FOUNDATION_TEST_TAG` for a confirmed synthetic account in the development project. Keep credentials and traces out of version control, and remove the test account and its companies afterward. The registration/email-delivery flow is a separate verification step.
+
+The build uses TypeScript's compiler API and worker threads so validation remains enabled in execution environments with constrained child-process output.
+
+Detailed architecture and milestones: [build plan](docs/safari-platform-build-plan.md).
+
 ### Authentication configuration
 
 Set Supabase Auth's Site URL and allowed redirect URL to the deployment URL and `/auth/callback`. Keep email confirmation enabled. The default Supabase mail sender has restrictions; configure a production SMTP provider before broad user onboarding. Never disable email confirmation as a workaround for delivery failures.
@@ -39,3 +47,5 @@ Company membership is stored in the database, not editable user metadata. Caller
 ### Deployment
 
 GitHub `main` is the source for the new Vercel project. Public Supabase config belongs in Vercel environment variables. Production and preview databases must be separately configured before a public release; previews should not share production customer data.
+
+The initial Supabase project is a development/pilot database, connected to Vercel preview and local development only. The production environment intentionally has no database credentials yet. Provision and verify separate production infrastructure before launching real operator offers or taking customer bookings.

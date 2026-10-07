@@ -1,12 +1,110 @@
 "use server";
-import {redirect} from "next/navigation";
-import {revalidatePath} from "next/cache";
-import {localeOf} from "@/lib/i18n";
-import {requireUser,requireCompany} from "@/lib/workspace";
-import {canManageClients,canManageSettings,validCompany,validClient} from "@/lib/validation";
-const field=(form:FormData,key:string)=>String(form.get(key)||"").trim();
-function companyInput(form:FormData){return {name:field(form,"name"),slug:field(form,"slug"),country:field(form,"country").toUpperCase(),currency:field(form,"currency").toUpperCase(),locale:field(form,"companyLocale"),timeZone:field(form,"timeZone")};}
-function notice(code?:string){return code==="23505"?"duplicate":code==="42501"?"denied":"failed";}
-export async function createCompany(form:FormData){const locale=localeOf(form.get("locale"));const value=companyInput(form);if(!validCompany(value))redirect(`/${locale}/workspace/new?notice=invalidForm`);const {db}=await requireUser(locale);const {error}=await db.rpc("create_company",{company_name:value.name,company_slug:value.slug,country:value.country,currency:value.currency,locale:value.locale,zone:value.timeZone});if(error)redirect(`/${locale}/workspace/new?notice=${notice(error.code)}`);revalidatePath(`/${locale}/workspace`);redirect(`/${locale}/workspace/${value.slug}`);}
-export async function saveSettings(form:FormData){const locale=localeOf(form.get("locale"));const slug=field(form,"slug");const value=companyInput(form);const {db,company,role}=await requireCompany(locale,slug);const path=`/${locale}/workspace/${company.slug}/settings`;if(!canManageSettings(role))redirect(`${path}?notice=denied`);if(!validCompany(value))redirect(`${path}?notice=invalidForm`);const {error,data}=await db.from("companies").update({name:value.name,country_code:value.country,base_currency:value.currency,default_locale:value.locale,time_zone:value.timeZone}).eq("id",company.id).select("id");if(error||!data?.length)redirect(`${path}?notice=${notice(error?.code)}`);revalidatePath(`/${locale}/workspace/${company.slug}`,"layout");redirect(`${path}?notice=saved`);}
-export async function saveClient(form:FormData){const locale=localeOf(form.get("locale"));const {db,company,role}=await requireCompany(locale,field(form,"slug"));const path=`/${locale}/workspace/${company.slug}/clients`;if(!canManageClients(role))redirect(`${path}?notice=denied`);const value={name:field(form,"name"),email:field(form,"email").toLowerCase(),phone:field(form,"phone"),notes:field(form,"notes")};if(!validClient(value))redirect(`${path}?notice=invalidForm`);const id=field(form,"id");const payload={full_name:value.name,email:value.email||null,phone:value.phone||null,notes:value.notes};const result=id?await db.from("company_clients").update(payload).eq("company_id",company.id).eq("id",id).select("id"):await db.from("company_clients").insert({...payload,company_id:company.id}).select("id");if(result.error||!result.data?.length)redirect(`${path}?notice=${notice(result.error?.code)}`);revalidatePath(path);revalidatePath(`/${locale}/workspace/${company.slug}`);redirect(`${path}?notice=saved`);}
+import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
+import { localeOf } from "@/lib/i18n";
+import { requireUser, requireCompany } from "@/lib/workspace";
+import {
+  canManageClients,
+  canManageSettings,
+  validCompany,
+  validClient,
+} from "@/lib/validation";
+const field = (form: FormData, key: string) =>
+  String(form.get(key) || "").trim();
+function companyInput(form: FormData) {
+  return {
+    name: field(form, "name"),
+    slug: field(form, "slug"),
+    country: field(form, "country").toUpperCase(),
+    currency: field(form, "currency").toUpperCase(),
+    locale: field(form, "companyLocale"),
+    timeZone: field(form, "timeZone"),
+  };
+}
+function notice(code?: string) {
+  return code === "23505"
+    ? "duplicate"
+    : code === "42501"
+      ? "denied"
+      : "failed";
+}
+export async function createCompany(form: FormData) {
+  const locale = localeOf(form.get("locale"));
+  const value = companyInput(form);
+  if (!validCompany(value))
+    redirect(`/${locale}/workspace/new?notice=invalidForm`);
+  const { db } = await requireUser(locale);
+  const { error } = await db.rpc("create_company", {
+    company_name: value.name,
+    company_slug: value.slug,
+    country: value.country,
+    currency: value.currency,
+    locale: value.locale,
+    zone: value.timeZone,
+  });
+  if (error) redirect(`/${locale}/workspace/new?notice=${notice(error.code)}`);
+  revalidatePath(`/${locale}/workspace`);
+  redirect(`/${locale}/workspace/${value.slug}`);
+}
+export async function saveSettings(form: FormData) {
+  const locale = localeOf(form.get("locale"));
+  const slug = field(form, "slug");
+  const value = companyInput(form);
+  const { db, company, role } = await requireCompany(locale, slug);
+  const path = `/${locale}/workspace/${company.slug}/settings`;
+  if (!canManageSettings(role)) redirect(`${path}?notice=denied`);
+  if (!validCompany(value)) redirect(`${path}?notice=invalidForm`);
+  const { error, data } = await db
+    .from("companies")
+    .update({
+      name: value.name,
+      country_code: value.country,
+      base_currency: value.currency,
+      default_locale: value.locale,
+      time_zone: value.timeZone,
+    })
+    .eq("id", company.id)
+    .select("id");
+  if (error || !data?.length) redirect(`${path}?notice=${notice(error?.code)}`);
+  revalidatePath(`/${locale}/workspace/${company.slug}`, "layout");
+  redirect(`${path}?notice=saved`);
+}
+export async function saveClient(form: FormData) {
+  const locale = localeOf(form.get("locale"));
+  const { db, company, role } = await requireCompany(
+    locale,
+    field(form, "slug"),
+  );
+  const path = `/${locale}/workspace/${company.slug}/clients`;
+  if (!canManageClients(role)) redirect(`${path}?notice=denied`);
+  const value = {
+    name: field(form, "name"),
+    email: field(form, "email").toLowerCase(),
+    phone: field(form, "phone"),
+    notes: field(form, "notes"),
+  };
+  if (!validClient(value)) redirect(`${path}?notice=invalidForm`);
+  const id = field(form, "id");
+  const payload = {
+    full_name: value.name,
+    email: value.email || null,
+    phone: value.phone || null,
+    notes: value.notes,
+  };
+  const result = id
+    ? await db
+        .from("company_clients")
+        .update(payload)
+        .eq("company_id", company.id)
+        .eq("id", id)
+        .select("id")
+    : await db
+        .from("company_clients")
+        .insert({ ...payload, company_id: company.id })
+        .select("id");
+  if (result.error || !result.data?.length)
+    redirect(`${path}?notice=${notice(result.error?.code)}`);
+  revalidatePath(path);
+  revalidatePath(`/${locale}/workspace/${company.slug}`);
+  redirect(`${path}?notice=saved`);
+}

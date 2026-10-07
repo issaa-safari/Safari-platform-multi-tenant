@@ -1,3 +1,87 @@
-import {currencies,countries,timeZones,locales,languageNames,messages,type Locale} from "@/lib/i18n";
-import type {Company} from "@/lib/workspace";
-export default function RegionalFields({locale,company}:{locale:Locale;company?:Company}){const t=messages(locale);const names=new Intl.DisplayNames([locale],{type:"region"});return <div className="form-grid"><label>{t.country}<input name="country" list="country-options" defaultValue={company?.country_code||""} pattern="[A-Z]{2}" maxLength={2} required placeholder="KE"/><datalist id="country-options">{countries.map(c=><option key={c} value={c}>{names.of(c)}</option>)}</datalist></label><label>{t.baseCurrency}<input name="currency" list="currency-options" defaultValue={company?.base_currency||"USD"} pattern="[A-Z]{3}" maxLength={3} required/><datalist id="currency-options">{currencies.map(c=><option key={c}>{c}</option>)}</datalist></label><label>{t.defaultLocale}<select name="companyLocale" defaultValue={company?.default_locale||locale}>{locales.map(l=><option key={l} value={l}>{languageNames[l]}</option>)}</select></label><label>{t.timeZone}<input name="timeZone" list="timezone-options" defaultValue={company?.time_zone||"UTC"} maxLength={100} required/><datalist id="timezone-options">{timeZones.map(z=><option key={z}>{z}</option>)}</datalist></label></div>;}
+import {
+  currencies,
+  countries,
+  timeZones,
+  locales,
+  languageNames,
+  messages,
+  type Locale,
+} from "@/lib/i18n";
+import type { Company } from "@/lib/workspace";
+export default function RegionalFields({
+  locale,
+  company,
+}: {
+  locale: Locale;
+  company?: Company;
+}) {
+  const t = messages(locale);
+  const names = new Intl.DisplayNames([locale], { type: "region" });
+  return (
+    <div className="form-grid">
+      <label>
+        {t.country}
+        <input
+          name="country"
+          list="country-options"
+          defaultValue={company?.country_code || ""}
+          pattern="[A-Z]{2}"
+          maxLength={2}
+          required
+          placeholder="KE"
+        />
+        <datalist id="country-options">
+          {countries.map((c) => (
+            <option key={c} value={c}>
+              {names.of(c)}
+            </option>
+          ))}
+        </datalist>
+      </label>
+      <label>
+        {t.baseCurrency}
+        <input
+          name="currency"
+          list="currency-options"
+          defaultValue={company?.base_currency || "USD"}
+          pattern="[A-Z]{3}"
+          maxLength={3}
+          required
+        />
+        <datalist id="currency-options">
+          {currencies.map((c) => (
+            <option key={c}>{c}</option>
+          ))}
+        </datalist>
+      </label>
+      <label>
+        {t.defaultLocale}
+        <select
+          name="companyLocale"
+          defaultValue={company?.default_locale || locale}
+        >
+          {locales.map((l) => (
+            <option key={l} value={l}>
+              {languageNames[l]}
+            </option>
+          ))}
+        </select>
+      </label>
+      <label>
+        {t.timeZone}
+        <input
+          name="timeZone"
+          list="timezone-options"
+          defaultValue={company?.time_zone || "UTC"}
+          maxLength={100}
+          required
+        />
+        <datalist id="timezone-options">
+          {timeZones.map((z) => (
+            <option key={z}>{z}</option>
+          ))}
+        </datalist>
+      </label>
+    </div>
+  );
+}

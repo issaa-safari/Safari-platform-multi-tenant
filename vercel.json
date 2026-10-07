@@ -1,6 +1,4 @@
 {
   "framework": "nextjs",
-  "regions": [
-    "dub1"
-  ]
+  "regions": ["dub1"]
 }

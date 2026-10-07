@@ -1,4 +1,41 @@
 import Link from "next/link";
-import {samples} from "@/lib/samples";
-import {messages,type Locale} from "@/lib/i18n";
-export default function Collection({locale,destination}:{locale:Locale;destination?:string}){const t=messages(locale);const trips=samples.filter(s=>!destination||s.country===destination);return <div className="trip-grid">{trips.map(trip=><article className="trip-card" key={trip.id}><Link href={`/${locale}/safaris/${trip.id}`}><div className="trip-image" style={{backgroundImage:`url('${trip.image}')`}}><span className="pill">{t[trip.country]} · {trip.days} {t.days}</span></div><div className="trip-body"><p className="overline">{trip.route.join(" · ")}</p><h3>{t[trip.title]}</h3><p>{t[trip.description]}</p><span className="text-link">{t.viewRoute} <span aria-hidden="true">↗</span></span></div></Link></article>)}</div>;}
+import { samples } from "@/lib/samples";
+import { messages, type Locale } from "@/lib/i18n";
+export default function Collection({
+  locale,
+  destination,
+}: {
+  locale: Locale;
+  destination?: string;
+}) {
+  const t = messages(locale);
+  const trips = samples.filter(
+    (s) => !destination || s.country === destination,
+  );
+  return (
+    <div className="trip-grid">
+      {trips.map((trip) => (
+        <article className="trip-card" key={trip.id}>
+          <Link href={`/${locale}/safaris/${trip.id}`}>
+            <div
+              className="trip-image"
+              style={{ backgroundImage: `url('${trip.image}')` }}
+            >
+              <span className="pill">
+                {t[trip.country]} · {trip.days} {t.days}
+              </span>
+            </div>
+            <div className="trip-body">
+              <p className="overline">{trip.route.join(" · ")}</p>
+              <h3>{t[trip.title]}</h3>
+              <p>{t[trip.description]}</p>
+              <span className="text-link">
+                {t.viewRoute} <span aria-hidden="true">↗︎</span>
+              </span>
+            </div>
+          </Link>
+        </article>
+      ))}
+    </div>
+  );
+}

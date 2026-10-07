@@ -1,4 +1,63 @@
 import Link from "next/link";
-import {localeOf,messages} from "@/lib/i18n";
+import { localeOf, messages } from "@/lib/i18n";
 import Collection from "@/components/collection";
-export default async function Page({params}:{params:Promise<{locale:string}>}){const locale=localeOf((await params).locale);const t=messages(locale);return <><section className="hero"><div className="hero-image"/><div className="hero-content wrap"><p className="eyebrow">{t.eyebrow}</p><h1>{t.hero}</h1><p className="hero-intro">{t.intro}</p><Link className="button light" href={`/${locale}/safaris`}>{t.start}<span aria-hidden="true">↗</span></Link></div><span className="hero-caption">MASAI MARA · KENYA</span></section><section className="section wrap"><div className="section-title"><div><p className="eyebrow">{t.explore}</p><h2>{t.collection}</h2></div><p>{t.collectionIntro}</p></div><p className="preview-label">{t.sample}</p><Collection locale={locale}/></section><section className="business-section"><div className="wrap business-inner"><div><p className="eyebrow">{t.companyEyebrow}</p><h2>{t.companyTitle}</h2><p>{t.companyIntro}</p><Link className="button" href={`/${locale}/companies`}>{t.companyCta}<span aria-hidden="true">↗</span></Link></div><div className="business-features">{([1,2,3] as const).map(i=><article key={i}><span className="feature-number">0{i}</span><div><h3>{t[`feature${i}`]}</h3><p>{t[`feature${i}body`]}</p></div></article>)}</div></div></section></>;}
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const locale = localeOf((await params).locale);
+  const t = messages(locale);
+  return (
+    <>
+      <section className="hero">
+        <div className="hero-image" />
+        <div className="hero-content wrap">
+          <p className="eyebrow">{t.eyebrow}</p>
+          <h1>{t.hero}</h1>
+          <p className="hero-intro">{t.intro}</p>
+          <Link className="button light" href={`/${locale}/safaris`}>
+            {t.start}
+            <span aria-hidden="true">↗︎</span>
+          </Link>
+        </div>
+        <span className="hero-caption">SAFARI COLLECTION</span>
+      </section>
+      <section className="section wrap">
+        <div className="section-title">
+          <div>
+            <p className="eyebrow">{t.explore}</p>
+            <h2>{t.collection}</h2>
+          </div>
+          <p>{t.collectionIntro}</p>
+        </div>
+        <p className="preview-label">{t.sample}</p>
+        <Collection locale={locale} />
+      </section>
+      <section className="business-section">
+        <div className="wrap business-inner">
+          <div>
+            <p className="eyebrow">{t.companyEyebrow}</p>
+            <h2>{t.companyTitle}</h2>
+            <p>{t.companyIntro}</p>
+            <Link className="button" href={`/${locale}/companies`}>
+              {t.companyCta}
+              <span aria-hidden="true">↗︎</span>
+            </Link>
+          </div>
+          <div className="business-features">
+            {([1, 2, 3] as const).map((i) => (
+              <article key={i}>
+                <span className="feature-number">0{i}</span>
+                <div>
+                  <h3>{t[`feature${i}`]}</h3>
+                  <p>{t[`feature${i}body`]}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+    </>
+  );
+}
