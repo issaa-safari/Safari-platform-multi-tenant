@@ -1,6 +1,6 @@
 # Safari Platform
 
-A new international safari marketplace and multi-tenant workspace for tour companies. This repository is independent of `Safari-duplicate`; no original production services are reused.
+A new international safari marketplace and multi-tenant workspace for tour companies, adapting reusable business rules and operator workflows from `Safari-duplicate`. Infrastructure and data are independent; no original production services are reused. See the [source audit and port map](docs/existing-system-adaptation.md).
 
 ## Foundation release
 
@@ -9,9 +9,11 @@ A new international safari marketplace and multi-tenant workspace for tour compa
 - Supabase account sign-in/registration and company creation/switching.
 - Company-specific language, currency, country and IANA time-zone settings.
 - Private client records with database-enforced company and role permissions.
+- Client-linked quote drafts with day-by-day itineraries, currency-aware selling prices, inclusions/exclusions and revision protection.
+- A separate pure pricing package carrying over seasonal supplier-rate resolution and refund-aware balances, with international currency/date validation.
 - Private storage access policies, audit events and real database isolation checks.
 
-Quotes, bookings, operator publication, configurator, traveler/supplier portals and subscriptions are planned next. International architecture does not imply that every language is translated or every country supports payments.
+Proposal delivery/acceptance, bookings, platform administration, operator publication, configurator, traveler/supplier portals and subscriptions are planned next. International architecture does not imply that every language is translated or every country supports payments.
 
 ## Development
 

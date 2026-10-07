@@ -155,6 +155,78 @@ export type Database = {
           },
         ];
       };
+      company_quote_drafts: {
+        Row: {
+          client_id: string;
+          company_id: string;
+          created_at: string;
+          currency: string;
+          days: Json;
+          end_date: string;
+          exclusions: string;
+          id: string;
+          inclusions: string;
+          lines: Json;
+          revision: number;
+          start_date: string;
+          title: string;
+          total_minor: number | null;
+          travelers: number;
+          updated_at: string;
+        };
+        Insert: {
+          client_id: string;
+          company_id: string;
+          created_at?: string;
+          currency: string;
+          days: Json;
+          end_date: string;
+          exclusions?: string;
+          id?: string;
+          inclusions?: string;
+          lines: Json;
+          revision?: number;
+          start_date: string;
+          title: string;
+          total_minor?: number | null;
+          travelers: number;
+          updated_at?: string;
+        };
+        Update: {
+          client_id?: string;
+          company_id?: string;
+          created_at?: string;
+          currency?: string;
+          days?: Json;
+          end_date?: string;
+          exclusions?: string;
+          id?: string;
+          inclusions?: string;
+          lines?: Json;
+          revision?: number;
+          start_date?: string;
+          title?: string;
+          total_minor?: number | null;
+          travelers?: number;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "company_quote_drafts_company_id_client_id_fkey";
+            columns: ["company_id", "client_id"];
+            isOneToOne: false;
+            referencedRelation: "company_clients";
+            referencedColumns: ["company_id", "id"];
+          },
+          {
+            foreignKeyName: "company_quote_drafts_company_id_fkey";
+            columns: ["company_id"];
+            isOneToOne: false;
+            referencedRelation: "companies";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Views: {
       [_ in never]: never;

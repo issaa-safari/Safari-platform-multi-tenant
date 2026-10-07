@@ -2,6 +2,7 @@ import Link from "next/link";
 import { localeOf, messages } from "@/lib/i18n";
 import { requireCompany } from "@/lib/workspace";
 import { canManageClients, canManageSettings } from "@/lib/validation";
+import { quoteMessages } from "@/lib/quote-messages";
 export default async function Layout({
   children,
   params,
@@ -29,6 +30,9 @@ export default async function Layout({
           <Link href={base}>{t.dashboard}</Link>
           {canManageClients(role) && (
             <Link href={`${base}/clients`}>{t.clients}</Link>
+          )}
+          {canManageClients(role) && (
+            <Link href={`${base}/quotes`}>{quoteMessages(locale).quotes}</Link>
           )}
           {canManageSettings(role) && (
             <Link href={`${base}/settings`}>{t.settings}</Link>

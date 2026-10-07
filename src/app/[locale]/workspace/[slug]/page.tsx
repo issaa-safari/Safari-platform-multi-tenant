@@ -2,6 +2,7 @@ import Link from "next/link";
 import { localeOf, messages } from "@/lib/i18n";
 import { requireCompany } from "@/lib/workspace";
 import { canManageClients } from "@/lib/validation";
+import { quoteMessages } from "@/lib/quote-messages";
 export default async function Page({
   params,
 }: {
@@ -56,6 +57,15 @@ export default async function Page({
             href={`/${locale}/workspace/${slug}/clients`}
           >
             {t.addClient} ↗︎
+          </Link>
+        </div>
+      )}
+      {canManageClients(role) && (
+        <div className="panel next-step">
+          <h2>{quoteMessages(locale).quotes}</h2>
+          <p>{quoteMessages(locale).intro}</p>
+          <Link className="button" href={`/${locale}/workspace/${slug}/quotes`}>
+            {quoteMessages(locale).quotes} ↗︎
           </Link>
         </div>
       )}

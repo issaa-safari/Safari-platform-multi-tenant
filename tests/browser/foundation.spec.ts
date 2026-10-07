@@ -92,6 +92,107 @@ test("account to company to private client to settings", async ({ page }) => {
   ).toBeVisible();
   await expect(page.locator(".client-row")).toHaveCount(1);
   await page
+    .getByRole("link", { name: "Quotes & itineraries", exact: true })
+    .click();
+  await page.getByRole("link", { name: "Create a quote", exact: true }).click();
+  await expect(
+    page.getByRole("heading", { name: "Create a quote", exact: true }),
+  ).toBeVisible();
+  await page
+    .getByLabel("Trip title", { exact: true })
+    .fill("Private safari browser draft");
+  await page
+    .getByLabel("Client", { exact: true })
+    .selectOption({ label: "Zoë García Updated" });
+  await page.getByLabel("Quote currency", { exact: true }).selectOption("EUR");
+  await page.getByLabel("Trip start date", { exact: true }).fill("2026-11-01");
+  await page.getByLabel("Trip end date", { exact: true }).fill("2026-11-02");
+  await page
+    .getByLabel("Day title", { exact: true })
+    .fill("Arrival in Nairobi");
+  await page
+    .getByLabel("Description", { exact: true })
+    .fill("Meet your guide.");
+  await page.getByRole("button", { name: "Add a day", exact: true }).click();
+  await page
+    .getByLabel("Day title", { exact: true })
+    .nth(1)
+    .fill("Safari and departure");
+  await page
+    .getByLabel("Description", { exact: true })
+    .nth(1)
+    .fill("Game drive and transfer.");
+  await page
+    .getByLabel("Service description", { exact: true })
+    .fill("Private safari package");
+  await page.getByLabel("Quantity", { exact: true }).fill("3");
+  await page
+    .getByLabel("Unit selling price (EUR)", { exact: true })
+    .fill("100.01");
+  await expect(page.locator(".quote-total")).toContainText("€300.03");
+  await page
+    .getByLabel("Included services", { exact: true })
+    .fill("Guide and transport");
+  await page
+    .getByRole("button", { name: "Save quote draft", exact: true })
+    .click();
+  await expect(
+    page.getByRole("heading", { name: "Edit quote draft", exact: true }),
+  ).toBeVisible();
+  await expect(page.getByLabel("Trip title", { exact: true })).toHaveValue(
+    "Private safari browser draft",
+  );
+  await expect(
+    page.getByLabel("Day title", { exact: true }).nth(1),
+  ).toHaveValue("Safari and departure");
+  const stale = await page.context().newPage();
+  await stale.goto(page.url());
+  await expect(stale.getByLabel("Trip title", { exact: true })).toHaveValue(
+    "Private safari browser draft",
+  );
+  await page
+    .getByLabel("Trip title", { exact: true })
+    .fill("Updated safari draft");
+  await page
+    .getByRole("button", { name: "Save quote draft", exact: true })
+    .click();
+  await expect(page.locator(".eyebrow")).toContainText("Revision 2");
+  await stale
+    .getByLabel("Trip title", { exact: true })
+    .fill("Stale title must not overwrite");
+  await stale
+    .getByRole("button", { name: "Save quote draft", exact: true })
+    .click();
+  await expect(
+    stale
+      .getByRole("alert")
+      .filter({ hasText: "changed while you were editing" }),
+  ).toContainText("changed while you were editing");
+  await expect(stale.getByLabel("Trip title", { exact: true })).toHaveValue(
+    "Updated safari draft",
+  );
+  await stale.close();
+  await page.screenshot({
+    path: "test-results/adapted-quote-desktop.png",
+    fullPage: true,
+  });
+  await page.setViewportSize({ width: 390, height: 844 });
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= window.innerWidth,
+    ),
+  ).toBe(true);
+  await page.screenshot({
+    path: "test-results/adapted-quote-mobile.png",
+    fullPage: true,
+  });
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await page.getByRole("link", { name: "Back to quotes", exact: true }).click();
+  await expect(
+    page.getByRole("heading", { name: "Updated safari draft", exact: true }),
+  ).toBeVisible();
+  await expect(page.getByText("€300.03", { exact: true })).toBeVisible();
+  await page
     .getByRole("link", { name: "Company settings", exact: true })
     .click();
   await expect(

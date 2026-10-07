@@ -1,0 +1,11 @@
+{
+  "name": "@safari/pricing",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./rates": "./src/rate-resolution.ts",
+    "./money": "./src/money.ts",
+    "./balance": "./src/balance.ts"
+  }
+}
